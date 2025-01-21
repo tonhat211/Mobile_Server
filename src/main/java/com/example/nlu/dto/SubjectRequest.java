@@ -4,6 +4,15 @@ public class SubjectRequest {
     private long semesterID;
     private long userID;
     private int day;
+    private long subjectID;
+
+    public long getSubjectID() {
+        return subjectID;
+    }
+
+    public void setSubjectID(long subjectID) {
+        this.subjectID = subjectID;
+    }
 
     public long getSemesterID() {
         return semesterID;

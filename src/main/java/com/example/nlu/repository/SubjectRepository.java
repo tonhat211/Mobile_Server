@@ -1,7 +1,6 @@
 package com.example.nlu.repository;
 
 import com.example.nlu.model.Subject;
-import com.example.nlu.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +17,12 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
 //    List<Subject> findSubjectsBySemesterID(@Param("semesterID") Long semesterID);
 //    @Query("SELECT s FROM Subject s WHERE s.startDate > :currentDate")
 //    List<Subject> getSubjectsBeforeStartDate(LocalDate currentDate);
+
+    @Query("SELECT s " +
+            "FROM Subject s " +
+            "WHERE s.id =:id")
+    List<Subject> findSubjectByID(@Param("id") long id);
+
 }
 
 

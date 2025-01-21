@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 public interface SubjectClassRepository extends JpaRepository<SubjectClass, Long> {
     List<SubjectClass> findAll();
+
     @Query("SELECT r.subjectClass FROM Registration r " +
             "WHERE r.user.id = :userID " +
             "AND r.subjectClass.startDate >= (SELECT sem.startDate FROM Semester sem WHERE sem.id = :semesterID) "+
@@ -37,6 +38,9 @@ public interface SubjectClassRepository extends JpaRepository<SubjectClass, Long
             "WHERE sc.id IN :ids")
     List<SubjectClass> findSubjectClassByIDs( @Param("ids") List<Long> ids);
 
+    @Query("SELECT sc FROM SubjectClass sc " +
+            "WHERE sc.status =:comingStatus")
+    List<SubjectClassResponse> findAllRegisteringSubjectClass(@Param("comingStatus") int comingStatus);
 
 
 
