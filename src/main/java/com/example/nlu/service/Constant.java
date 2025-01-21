@@ -14,4 +14,18 @@ public class Constant {
     public static final int SUCCESS_STATUS = 1;
     public static final int FAIL_STATUS = 0;
     public static final int SAME_TIME_FAIL_STATUS = -1;
+
+    // hash password
+    public static String hashPassword(String password) {
+        HashAlgorism hashAlgorism = new HashAlgorism();
+        try {
+            return hashAlgorism.hash(password);
+        } catch (Exception e) {
+            return "null";
+        }
+    }
+
+    public static final String ADMIN_GRANT = "ADMIN";
+
+
 }

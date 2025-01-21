@@ -4,6 +4,7 @@ import com.example.nlu.dto.*;
 import com.example.nlu.model.Registration;
 import com.example.nlu.model.SubjectClass;
 import com.example.nlu.model.User;
+import com.example.nlu.repository.BlockRegisterRepository;
 import com.example.nlu.repository.ProgramRepository;
 import com.example.nlu.repository.RegistrationRepository;
 import com.example.nlu.repository.SubjectClassRepository;
@@ -13,6 +14,7 @@ import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,38 +35,40 @@ public class RegistrationController {
     private SubjectClassRepository subjectClassRepository;
     @Autowired
     private ProgramRepository programRepository;
+    @Autowired
+    private BlockRegisterRepository blockRegisterRepository;
 
     @PostMapping("/subjectclasses")
-    public List<RegisteringSubjectClassResponse> getRegisterSubjectClassByClassID(@RequestBody RegisterRequest params, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<RegisteringSubjectClassResponse>> getRegisterSubjectClassByClassID(@RequestBody RegisterRequest params, @RequestHeader("Authorization") String token) {
         System.out.println("get register by classID: " + params.getUserID());
         if (token == null || token.isEmpty()) {
             throw new RegistrationController.UnauthorizedException("Token không tồn tại");
         }
         try {
-
-            // Kiểm tra tính hợp lệ của token
             if (!JwtUtils.validateToken(token)) {
                 throw new RegistrationController.UnauthorizedException("Token hết hạn hoặc không hợp lệ");
             }
         } catch (JwtException e) {
-            // Xử lý lỗi khi giải mã token không hợp lệ
             throw new RegistrationController.UnauthorizedException("Token không hợp lệ: " + e.getMessage());
+        }
+        List<Long> blockedIDs = blockRegisterRepository.findBlockedIDs();
+        if(blockedIDs.contains(params.getUserID())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+
         }
         String queryFilter = params.getQueryFilter();
         if(queryFilter.equalsIgnoreCase("class"))
-            return registrationRepository.findRegisterSubjectClassesByClassID(params.getUserID(), Constant.COMING_STATUS, Constant.DELETED_STATUS);
+            return ResponseEntity.ok(registrationRepository.findRegisterSubjectClassesByClassID(params.getUserID(), Constant.COMING_STATUS, Constant.DELETED_STATUS));
         else if(queryFilter.equalsIgnoreCase("program")) {
             String subjectIDsJSON = programRepository.findSubjectIdsByMajor(params.getUserID());
             Gson gson = new Gson();
-            // Xác định kiểu của danh sách Long
             Type listType = new TypeToken<List<Long>>() {}.getType();
-            // Chuyển chuỗi JSON thành List<Long>
             List<Long> subjectIDs = gson.fromJson(subjectIDsJSON, listType);
-            return registrationRepository.findRegisterSubjectClassesByProgram(subjectIDs, Constant.COMING_STATUS, Constant.DELETED_STATUS);
+            return ResponseEntity.ok(registrationRepository.findRegisterSubjectClassesByProgram(subjectIDs, Constant.COMING_STATUS, Constant.DELETED_STATUS));
         }
 
         else
-            return registrationRepository.findRegisterSubjectClassesByClassID(params.getUserID(), Constant.COMING_STATUS, Constant.DELETED_STATUS);
+            return ResponseEntity.ok(registrationRepository.findRegisterSubjectClassesByClassID(params.getUserID(), Constant.COMING_STATUS, Constant.DELETED_STATUS));
 
 
     }

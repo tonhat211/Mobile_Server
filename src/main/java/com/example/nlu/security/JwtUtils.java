@@ -14,34 +14,34 @@ public class JwtUtils {
 
     public static String generateToken(long userID) {
         return Jwts.builder()
-                .setSubject(String.valueOf(userID))  // Chuyển userID thành String khi sử dụng làm subject
-                .claim("id", userID)  // Lưu userID dưới dạng long trong claim "id"
-                .setIssuedAt(new Date())  // Thời gian phát hành token
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))  // Token hợp lệ trong 1 ngày
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)  // Ký bằng khóa bí mật an toàn và chỉ định thuật toán
+                .setSubject(String.valueOf(userID))
+                .claim("id", userID)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))  // token het
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();  // Trả về chuỗi token
     }
 
     public static boolean validateToken(String token) {
-            return true;
-//        token =token.replace("Bearer ", "");
+//            return true;
+        token =token.replace("Bearer ", "");
 
-//        try {
-//            Jwts.parserBuilder()
-//                    .setSigningKey(SECRET_KEY)  // Đặt khóa bí mật để xác minh chữ ký
-//                    .build()
-//                    .parseClaimsJws(token);  // Giải mã token và kiểm tra tính hợp lệ của nó
-//            return true;  // Token hợp lệ
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//            return false;  // Token không hợp lệ hoặc đã hết hạn
-//        }
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)  // Đặt khóa bí mật để xác minh chữ ký
+                    .build()
+                    .parseClaimsJws(token);  // Giải mã token và kiểm tra tính hợp lệ của nó
+            return true;  // Token hợp lệ
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;  // Token không hợp lệ hoặc đã hết hạn
+        }
     }
 
     public static void main(String[] args) {
         String token = JwtUtils.generateToken(1);
         System.out.println(token);
-        token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWQiOjEsImlhdCI6MTczNTcxNjYwNywiZXhwIjoxNzM1ODAzMDA3fQ.tOyfBd6SIAuMXAdnZPEGwQFWLuW3tPCNapd7D-Hk9WU";
+        token ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWQiOjEsImlhdCI6MTczNjk2NzI4NywiZXhwIjoxNzM3MDUzNjg3fQ.CYsaY6MvbQ-bPjzdbhUfeT83DNZfRLCcyGjIElDXCU0";
         if(!JwtUtils.validateToken(token)) {
             System.out.println("token het han");
         } else {

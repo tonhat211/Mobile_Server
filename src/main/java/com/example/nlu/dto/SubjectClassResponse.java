@@ -31,7 +31,7 @@ public class SubjectClassResponse {
         this.subjectName = subjectClass.getSubject().getName();
         this.subjectCredit = subjectClass.getSubject().getCredit();
         this.subjectGroup = subjectClass.getSubject().getGroup();
-        this.teacherID = subjectClass.getId();
+        this.teacherID = subjectClass.getTeacher().getId();
         this.teacherName = subjectClass.getTeacher().getName();
         this.startLesson = subjectClass.getStartLesson();
         this.lessonNum = subjectClass.getLessonNum();

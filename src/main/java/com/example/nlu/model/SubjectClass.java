@@ -40,6 +40,9 @@ public class SubjectClass {
     @Column(name="remaining_qty", nullable = false)
     private int remainingQty;
 
+    public SubjectClass() {
+    }
+
     public int getRemainingQty() {
         return remainingQty;
     }
@@ -84,8 +87,8 @@ public class SubjectClass {
         return subject;
     }
 
-    public void setSubject(com.example.nlu.model.Subject subject) {
-        subject = subject;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public Teacher getTeacher() {
